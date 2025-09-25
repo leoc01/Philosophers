@@ -1,4 +1,4 @@
-/* ************************************************************************** */
+/* *****************q********************************************************* */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
@@ -41,7 +41,7 @@ void	f_save_times(t_times *times, const char **arg)
 
 unsigned int	f_atoui(const char *nptr)
 {
-	unsigned int	result;
+	unsigned long int	result;
 
 	result = 0;
 	while (*nptr >= '0' && *nptr <= '9' && *nptr != '\0' )
@@ -51,13 +51,13 @@ unsigned int	f_atoui(const char *nptr)
 	}
 	if (result > UINT_MAX)
 		return (0);
-	return ((int)result);
+	return ((unsigned int)result);
 }
 
 int	f_invalid_args(const int argc, const char **arg)
 {
-	int	w;
-	int	c;
+	unsigned int	w;
+	unsigned int	c;
 
 	if (argc != 5 && argc != 6)
 		return (TRUE);
