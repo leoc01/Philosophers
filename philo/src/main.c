@@ -15,12 +15,10 @@
 int	main(int argc, char **argv)
 {
 	t_times	times;
-	int		i;
 
 	if (f_invalid_args(argc, (const char **)&argv[1]))
 		return (1);
 	f_save_times(&times, (const char **)&argv[1]);
-	i = 0;
 	printf("%d\n", times.philos);
 	printf("%d\n", times.ttd);
 	printf("%d\n", times.tte);
@@ -58,9 +56,11 @@ int	f_invalid_args(const int argc, const char **arg)
 {
 	unsigned int	w;
 	unsigned int	c;
+	int				is_invalid;
 
+	is_invalid = FALSE;
 	if (argc != 5 && argc != 6)
-		return (TRUE);
+		is_invalid = TRUE;
 	w = 0;
 	while (arg[w] != NULL)
 	{
@@ -68,12 +68,16 @@ int	f_invalid_args(const int argc, const char **arg)
 		while (arg[w][c] != '\0')
 		{
 			if (!f_is_digit(arg[w][c]))
-				return (TRUE);
+				is_invalid = TRUE;
 			c++;
 		}
 		w++;
 	}
-	return (FALSE);
+	if (is_invalid)
+		printf("usage: ./philo <number_of_philos> "
+				"<time_to_die> <time_to eat> <time_to_sleep> "
+				"<number_of_meals>(optional)\n");
+	return (is_invalid);
 }
 
 int	f_is_digit(int c)
