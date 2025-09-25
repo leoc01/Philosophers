@@ -14,14 +14,71 @@
 
 int	main(int argc, char **argv)
 {
-	int	i;
+	t_times	times;
+	int		i;
+
+	if (f_invalid_args(argc, (const char **)&argv[1]))
+		return (1);
+	save_times(&times, (const char **)&argv[1]);
+	i = 0;
+	printf("%d\n", times.philos);
+	printf("%d\n", times.ttd);
+	printf("%d\n", times.tte);
+	printf("%d\n", times.tts);
+	printf("%d\n", times.meals);
+}
+
+void	save_times(t_times *times, const char **arg)
+{
+	times->meals = 0;
+	times->philos = f_atoi(arg[0]);
+	times->ttd = f_atoi(arg[1]);
+	times->tte = f_atoi(arg[2]);
+	times->tts = f_atoi(arg[3]);
+	if (arg[4])
+		times->meals = f_atoi(arg[4]);
+}
+
+int	f_atoi(const char *nptr)
+{
+	unsigned int	result;
+
+	result = 0;
+	while (*nptr >= '0' && *nptr <= '9' && *nptr != '\0' )
+	{
+		result = result * 10 + (*nptr) - '0';
+		nptr++;
+	}
+	if (result > UINT_MAX)
+		return (0);
+	return ((int)result);
+}
+
+int	f_invalid_args(const int argc, const char **arg)
+{
+	int	w;
+	int	c;
 
 	if (argc != 5 && argc != 6)
-		return (1);
-	i = 0;
-	while (argv[i])
+		return (TRUE);
+	w = 0;
+	while (arg[w] != NULL)
 	{
-		printf("%s\n", argv[i]);
-		i++;
+		c = 0;
+		while (arg[w][c] != '\0')
+		{
+			if (!f_is_digit(arg[w][c]))
+				return (TRUE);
+			c++;
+		}
+		w++;
 	}
+	return (FALSE);
+}
+
+int	f_is_digit(int c)
+{
+	if (c >= 48 && c <= 57)
+		return (TRUE);
+	return (FALSE);
 }
