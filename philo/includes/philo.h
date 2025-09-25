@@ -29,9 +29,9 @@ typedef struct s_times
 	unsigned int	meals;
 }	t_times;
 
-int		f_invalid_args(int argc, const char **arg);
-int		f_is_digit(int c);
-void	f_save_times(t_times *times, const char **arg);
-int		f_atoui(const char *nptr);
+int				f_invalid_args(int argc, const char **arg);
+int				f_is_digit(int c);
+void			f_save_times(t_times *times, const char **arg);
+unsigned int	f_atoui(const char *nptr);
 
 #endif

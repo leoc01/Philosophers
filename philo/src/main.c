@@ -19,7 +19,7 @@ int	main(int argc, char **argv)
 
 	if (f_invalid_args(argc, (const char **)&argv[1]))
 		return (1);
-	save_times(&times, (const char **)&argv[1]);
+	f_save_times(&times, (const char **)&argv[1]);
 	i = 0;
 	printf("%d\n", times.philos);
 	printf("%d\n", times.ttd);
@@ -28,18 +28,18 @@ int	main(int argc, char **argv)
 	printf("%d\n", times.meals);
 }
 
-void	save_times(t_times *times, const char **arg)
+void	f_save_times(t_times *times, const char **arg)
 {
 	times->meals = 0;
-	times->philos = f_atoi(arg[0]);
-	times->ttd = f_atoi(arg[1]);
-	times->tte = f_atoi(arg[2]);
-	times->tts = f_atoi(arg[3]);
+	times->philos = f_atoui(arg[0]);
+	times->ttd = f_atoui(arg[1]);
+	times->tte = f_atoui(arg[2]);
+	times->tts = f_atoui(arg[3]);
 	if (arg[4])
-		times->meals = f_atoi(arg[4]);
+		times->meals = f_atoui(arg[4]);
 }
 
-int	f_atoi(const char *nptr)
+unsigned int	f_atoui(const char *nptr)
 {
 	unsigned int	result;
 
