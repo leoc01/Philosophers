@@ -6,7 +6,7 @@
 /*   By: lbuscaro <lbuscaro@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 12:29:30 by lbuscaro          #+#    #+#             */
-/*   Updated: 2025/09/24 12:53:52 by lbuscaro         ###   ########.fr       */
+/*   Updated: 2025/09/26 11:24:22 by lbuscaro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <stdio.h>
 # include <unistd.h>
 # include <limits.h>
+# include <pthread.h>
 
 # define TRUE 1
 # define FALSE 0

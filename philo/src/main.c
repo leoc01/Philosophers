@@ -1,4 +1,4 @@
-/* *****************q********************************************************* */
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
@@ -6,7 +6,7 @@
 /*   By: lbuscaro <lbuscaro@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 12:26:54 by lbuscaro          #+#    #+#             */
-/*   Updated: 2025/09/24 12:54:12 by lbuscaro         ###   ########.fr       */
+/*   Updated: 2025/09/26 11:25:40 by lbuscaro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ unsigned int	f_atoui(const char *nptr)
 	unsigned long int	result;
 
 	result = 0;
-	while (*nptr >= '0' && *nptr <= '9' && *nptr != '\0' )
+	while (*nptr >= '0' && *nptr <= '9' && *nptr != '\0')
 	{
 		result = result * 10 + (*nptr) - '0';
 		nptr++;
@@ -74,9 +74,10 @@ int	f_invalid_args(const int argc, const char **arg)
 		w++;
 	}
 	if (is_invalid)
-		printf("usage: ./philo <number_of_philos> "
-				"<time_to_die> <time_to eat> <time_to_sleep> "
-				"<number_of_meals>(optional)\n");
+		printf(
+			"usage: ./philo <number_of_philos> "
+			"<time_to_die> <time_to eat> <time_to_sleep> "
+			"<number_of_meals>(optional)\n");
 	return (is_invalid);
 }
 
