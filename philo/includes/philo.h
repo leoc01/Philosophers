@@ -16,6 +16,7 @@
 # include <stdio.h>
 # include <unistd.h>
 # include <limits.h>
+# include <stdlib.h>
 # include <pthread.h>
 
 # define TRUE 1
@@ -23,16 +24,23 @@
 
 typedef struct s_times
 {
-	unsigned int	philos;
+	unsigned int	n_of_philos;
 	unsigned int	ttd;
 	unsigned int	tte;
 	unsigned int	tts;
 	unsigned int	meals;
 }	t_times;
 
-int				f_invalid_args(int argc, const char **arg);
-int				f_is_digit(int c);
-void			f_save_times(t_times *times, const char **arg);
-unsigned int	f_atoui(const char *nptr);
+typedef struct s_philo
+{
+	unsigned int	num;
+	pthread_t		philo_t;
+	pthread_mutex_t	*fork_l;
+	pthread_mutex_t	fork_r;
+	t_times			times;
+}	t_philo;
+
+int		f_is_invalid_args(int argc, const char **arg);
+t_philo	*f_init_philos(int argc, char **argv);
 
 #endif

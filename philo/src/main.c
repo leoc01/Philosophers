@@ -12,16 +12,38 @@
 
 #include "philo.h"
 
+void	*routine(void *p)
+{
+	t_philo	*philo;
+
+	philo = (t_philo *)p;
+	return (NULL);
+}
+
 int	main(int argc, char **argv)
 {
-	t_times	times;
+	t_philo			*philos;
+	unsigned int	i;
 
-	if (f_invalid_args(argc, (const char **)&argv[1]))
+	philos = f_init_philos(argc, argv);
+	if (!philos)
 		return (1);
-	f_save_times(&times, (const char **)&argv[1]);
-	printf("%d\n", times.philos);
-	printf("%d\n", times.ttd);
-	printf("%d\n", times.tte);
-	printf("%d\n", times.tts);
-	printf("%d\n", times.meals);
+	i = 0;
+	while (i < philos->times.n_of_philos)
+	{
+		if (pthread_create(
+				&philos[i].philo_t,
+				NULL,
+				&routine,
+				(void *)&philos[i]) != 0)
+			return (3);
+		i++;
+	}
+	i = 0;
+	while (i < philos->times.n_of_philos)
+	{
+		if (pthread_join(philos[i].philo_t, NULL) != 0)
+			return (4);
+		i++;
+	}
 }

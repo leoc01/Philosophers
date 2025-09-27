@@ -13,7 +13,7 @@
 NAME = philo
 
 CC = cc
-CFLAGS = -Wall -Werror -Wextra
+CFLAGS = -pthread -Wall -Werror -Wextra
 GDB= -g
 RM = rm -rf
 
@@ -24,18 +24,19 @@ BUILD_DIR = ./build
 M_MAIN = $(SRC_DIR)/main.c
 M_MAIN_OBJ = $(BUILD_DIR)/main.o
 
-M_SRC = utils.c
+M_SRC = args_check.c
+M_SRC += init_philos.c
 M_SRC := $(addprefix $(SRC_DIR)/,$(M_SRC))
 M_OBJ = $(M_SRC:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 
 all: $(NAME)
 
 $(NAME): $(LFT) $(M_OBJ) $(M_MAIN_OBJ)
-	$(CC) $(CFLAGS) $(M_OBJ) $(M_MAIN_OBJ) -o $(NAME)
+	$(CC) $(GDB) $(CFLAGS) $(M_OBJ) $(M_MAIN_OBJ) -o $(NAME)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c 
 	@mkdir -p $(BUILD_DIR)
-	$(CC) $(CFLAGS) -I$(INCLUDES_DIR) -c $< -o $@
+	$(CC) $(GDB) $(CFLAGS) -I$(INCLUDES_DIR) -c $< -o $@
 
 clean:
 	$(RM) $(BUILD_DIR)
