@@ -46,13 +46,26 @@ t_philo	*f_init_philos(int argc, char **argv)
 
 static void	f_save_times(t_times *times, const char **arg)
 {
-	times->meals = 0;
-	times->n_of_philos = f_atoui(arg[0]);
-	times->ttd = f_atoui(arg[1]);
-	times->tte = f_atoui(arg[2]);
-	times->tts = f_atoui(arg[3]);
-	if (arg[4])
-		times->meals = f_atoui(arg[4]);
+	static unsigned int	n_of_philos;
+	static unsigned int ttd;
+	static unsigned int tte;
+	static unsigned int tts;
+	static unsigned int	meals;
+
+	if (n_of_philos ==0)
+	{
+		n_of_philos = f_atoui(arg[0]);
+		ttd = f_atoui(arg[1]);
+		tte = f_atoui(arg[2]);
+		tts = f_atoui(arg[3]);
+		if (arg[4])
+			meals = f_atoui(arg[4]);
+	}
+	times->n_of_philos = n_of_philos;
+	times->ttd = ttd;
+	times->tte = tte;
+	times->tts = tts;
+	times->meals = meals;
 }
 
 static unsigned int	f_atoui(const char *nptr)
