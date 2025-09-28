@@ -25,9 +25,9 @@
 typedef struct s_args
 {
 	unsigned int	n_of_philos;
-	unsigned int	ttd;
-	unsigned int	tte;
-	unsigned int	tts;
+	unsigned int	time_to_die;
+	unsigned int	time_to_eat;
+	unsigned int	time_to_sleep;
 	unsigned int	meals;
 }	t_args;
 

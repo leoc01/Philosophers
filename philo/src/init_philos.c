@@ -47,24 +47,24 @@ t_philo	*f_init_philos(int argc, char **argv)
 static void	f_save_args(t_args *args, const char **arg)
 {
 	static unsigned int	n_of_philos;
-	static unsigned int ttd;
-	static unsigned int tte;
-	static unsigned int tts;
+	static unsigned int	time_to_die;
+	static unsigned int	time_to_eat;
+	static unsigned int	time_to_sleep;
 	static unsigned int	meals;
 
-	if (n_of_philos ==0)
+	if (n_of_philos == 0)
 	{
 		n_of_philos = f_atoui(arg[0]);
-		ttd = f_atoui(arg[1]);
-		tte = f_atoui(arg[2]);
-		tts = f_atoui(arg[3]);
+		time_to_die = f_atoui(arg[1]);
+		time_to_eat = f_atoui(arg[2]);
+		time_to_sleep = f_atoui(arg[3]);
 		if (arg[4])
 			meals = f_atoui(arg[4]);
 	}
 	args->n_of_philos = n_of_philos;
-	args->ttd = ttd;
-	args->tte = tte;
-	args->tts = tts;
+	args->time_to_die = time_to_die;
+	args->time_to_eat = time_to_eat;
+	args->time_to_sleep = time_to_sleep;
 	args->meals = meals;
 }
 
