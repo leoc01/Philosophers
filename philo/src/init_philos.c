@@ -23,7 +23,7 @@ t_philo	*f_init_philos(int argc, char **argv, t_net *net)
 
 	if (f_is_invalid_args(argc, (const char **)&argv[1]))
 		return (NULL);
-	philos = malloc(code.n_of_philos * sizeof(t_philo));
+	philos = malloc(f_atoui(argv[1]) * sizeof(t_philo));
 	if (!philos)
 		return (NULL);
 	i = -1;

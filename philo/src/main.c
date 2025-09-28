@@ -15,12 +15,21 @@
 void	*life(void *p)
 {
 	t_philo	*philo;
+	int		write;
 
+	write = 0;
 	philo = (t_philo *)p;
 	pthread_mutex_lock(&philo->net->last_whisper);
-	printf("I am dead\n");
-	philo->net->someone_died = 1;
+	usleep(2000000);
+	fprintf(stderr, "life net=%p\n", (void*)philo->net);
+	if (!philo->net->someone_died)
+	{
+		philo->net->someone_died = 1;
+		write = 1;
+	}
 	pthread_mutex_unlock(&philo->net->last_whisper);
+	if (write)
+		printf("I am dead\n");
 	return (NULL);
 }
 
@@ -54,6 +63,7 @@ int	main(int argc, char **argv)
 	pthread_mutex_init(&net.life_feed, NULL);
 	pthread_mutex_init(&net.last_whisper, NULL);
 	philos = f_init_philos(argc, argv, &net);
+	fprintf(stderr, "main net=%p philos[0].net=%p\n", (void*)&net, (void*)philos[0].net);
 	if (!philos)
 		return (1);
 	if (spawn_philos(philos) == -1)
@@ -65,7 +75,13 @@ int	main(int argc, char **argv)
 	{
 		pthread_mutex_lock(&net.last_whisper);
 		if (net.someone_died)
-			all_alive = 0;
+		{
+			pthread_mutex_unlock(&net.last_whisper);
+			break;
+		}
 		pthread_mutex_unlock(&net.last_whisper);
+		usleep(3000);
 	}
+	pthread_mutex_destroy(&net.last_whisper);
+	free(philos);
 }
