@@ -22,25 +22,33 @@
 # define TRUE 1
 # define FALSE 0
 
-typedef struct s_args
+typedef struct s_code
 {
 	unsigned int	n_of_philos;
 	unsigned int	time_to_die;
 	unsigned int	time_to_eat;
 	unsigned int	time_to_sleep;
 	unsigned int	meals;
-}	t_args;
+}	t_code;
+
+typedef struct s_net
+{
+	pthread_mutex_t	life_feed;
+	pthread_mutex_t	last_whisper;
+	int				someone_died;
+}	t_net;
 
 typedef struct s_philo
 {
 	unsigned int	num;
-	pthread_t		philo_t;
+	pthread_t		thread;
 	pthread_mutex_t	*fork_l;
 	pthread_mutex_t	fork_r;
-	t_args			args;
+	t_code			code;
+	t_net			*net;
 }	t_philo;
 
 int		f_is_invalid_args(int argc, const char **arg);
-t_philo	*f_init_philos(int argc, char **argv);
+t_philo	*f_init_philos(int argc, char **argv, t_net *net);
 
 #endif

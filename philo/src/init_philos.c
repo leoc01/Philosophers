@@ -12,27 +12,27 @@
 
 #include "philo.h"
 
-static void			f_save_args(t_args *args, const char **arg);
+static void			f_ground_philo(t_philo *phi, t_net *net, const char **arg);
 static unsigned int	f_atoui(const char *nptr);
 
-t_philo	*f_init_philos(int argc, char **argv)
+t_philo	*f_init_philos(int argc, char **argv, t_net *net)
 {
 	t_philo			*philos;
-	t_args			args;
+	t_code			code;
 	unsigned int	i;
 
 	if (f_is_invalid_args(argc, (const char **)&argv[1]))
 		return (NULL);
-	philos = malloc(args.n_of_philos * sizeof(t_philo));
+	philos = malloc(code.n_of_philos * sizeof(t_philo));
 	if (!philos)
 		return (NULL);
 	i = -1;
-	while (++i < args.n_of_philos)
+	while (++i < code.n_of_philos)
 	{
 		philos[i].num = i;
-		f_save_args(&philos[i].args, (const char **)&argv[1]);
+		f_ground_philo(&philos[i], net, (const char **)&argv[1]);
 		if (i == 0)
-			philos[i].fork_l = &philos[args.n_of_philos].fork_r;
+			philos[i].fork_l = &philos[code.n_of_philos].fork_r;
 		else
 			philos[i].fork_l = &philos[i - 1].fork_r;
 		if (pthread_mutex_init(&philos[i].fork_r, NULL) == -1)
@@ -44,7 +44,7 @@ t_philo	*f_init_philos(int argc, char **argv)
 	return (philos);
 }
 
-static void	f_save_args(t_args *philo_args, const char **arg)
+static void	f_ground_philo(t_philo *phi, t_net *net, const char **arg)
 {
 	static unsigned int	n_of_philos;
 	static unsigned int	time_to_die;
@@ -61,11 +61,12 @@ static void	f_save_args(t_args *philo_args, const char **arg)
 		if (arg[4])
 			meals = f_atoui(arg[4]);
 	}
-	philo_args->n_of_philos = n_of_philos;
-	philo_args->time_to_die = time_to_die;
-	philo_args->time_to_eat = time_to_eat;
-	philo_args->time_to_sleep = time_to_sleep;
-	philo_args->meals = meals;
+	phi->code.n_of_philos = n_of_philos;
+	phi->code.time_to_die = time_to_die;
+	phi->code.time_to_eat = time_to_eat;
+	phi->code.time_to_sleep = time_to_sleep;
+	phi->code.meals = meals;
+	phi->net = net;
 }
 
 static unsigned int	f_atoui(const char *nptr)
