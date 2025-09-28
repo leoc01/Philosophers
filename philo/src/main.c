@@ -29,7 +29,7 @@ int	main(int argc, char **argv)
 	if (!philos)
 		return (1);
 	i = 0;
-	while (i < philos->times.n_of_philos)
+	while (i < philos->args.n_of_philos)
 	{
 		if (pthread_create(
 				&philos[i].philo_t,
@@ -40,7 +40,7 @@ int	main(int argc, char **argv)
 		i++;
 	}
 	i = 0;
-	while (i < philos->times.n_of_philos)
+	while (i < philos->args.n_of_philos)
 	{
 		if (pthread_join(philos[i].philo_t, NULL) != 0)
 			return (4);

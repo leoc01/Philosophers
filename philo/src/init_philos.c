@@ -12,27 +12,27 @@
 
 #include "philo.h"
 
-static void			f_save_times(t_times *times, const char **arg);
+static void			f_save_args(t_args *args, const char **arg);
 static unsigned int	f_atoui(const char *nptr);
 
 t_philo	*f_init_philos(int argc, char **argv)
 {
 	t_philo			*philos;
-	t_times			times;
+	t_args			args;
 	unsigned int	i;
 
 	if (f_is_invalid_args(argc, (const char **)&argv[1]))
 		return (NULL);
-	philos = malloc(times.n_of_philos * sizeof(t_philo));
+	philos = malloc(args.n_of_philos * sizeof(t_philo));
 	if (!philos)
 		return (NULL);
 	i = -1;
-	while (++i < times.n_of_philos)
+	while (++i < args.n_of_philos)
 	{
 		philos[i].num = i;
-		f_save_times(&philos[i].times, (const char **)&argv[1]);
+		f_save_args(&philos[i].args, (const char **)&argv[1]);
 		if (i == 0)
-			philos[i].fork_l = &philos[times.n_of_philos].fork_r;
+			philos[i].fork_l = &philos[args.n_of_philos].fork_r;
 		else
 			philos[i].fork_l = &philos[i - 1].fork_r;
 		if (pthread_mutex_init(&philos[i].fork_r, NULL) == -1)
@@ -44,7 +44,7 @@ t_philo	*f_init_philos(int argc, char **argv)
 	return (philos);
 }
 
-static void	f_save_times(t_times *times, const char **arg)
+static void	f_save_args(t_args *args, const char **arg)
 {
 	static unsigned int	n_of_philos;
 	static unsigned int ttd;
@@ -61,11 +61,11 @@ static void	f_save_times(t_times *times, const char **arg)
 		if (arg[4])
 			meals = f_atoui(arg[4]);
 	}
-	times->n_of_philos = n_of_philos;
-	times->ttd = ttd;
-	times->tte = tte;
-	times->tts = tts;
-	times->meals = meals;
+	args->n_of_philos = n_of_philos;
+	args->ttd = ttd;
+	args->tte = tte;
+	args->tts = tts;
+	args->meals = meals;
 }
 
 static unsigned int	f_atoui(const char *nptr)

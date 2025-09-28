@@ -22,14 +22,14 @@
 # define TRUE 1
 # define FALSE 0
 
-typedef struct s_times
+typedef struct s_args
 {
 	unsigned int	n_of_philos;
 	unsigned int	ttd;
 	unsigned int	tte;
 	unsigned int	tts;
 	unsigned int	meals;
-}	t_times;
+}	t_args;
 
 typedef struct s_philo
 {
@@ -37,7 +37,7 @@ typedef struct s_philo
 	pthread_t		philo_t;
 	pthread_mutex_t	*fork_l;
 	pthread_mutex_t	fork_r;
-	t_times			times;
+	t_args			args;
 }	t_philo;
 
 int		f_is_invalid_args(int argc, const char **arg);
