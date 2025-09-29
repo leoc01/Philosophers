@@ -18,21 +18,22 @@ static unsigned int	f_atoui(const char *nptr);
 t_philo	*f_init_philos(int argc, char **argv, t_net *net)
 {
 	t_philo			*philos;
-	t_code			code;
 	unsigned int	i;
+	unsigned int	n_of_philos;
 
 	if (f_is_invalid_args(argc, (const char **)&argv[1]))
 		return (NULL);
-	philos = malloc(f_atoui(argv[1]) * sizeof(t_philo));
+	n_of_philos = f_atoui(argv[1]);
+	philos = malloc(n_of_philos * sizeof(t_philo));
 	if (!philos)
 		return (NULL);
 	i = -1;
-	while (++i < code.n_of_philos)
+	while (++i < n_of_philos)
 	{
 		philos[i].num = i;
 		f_ground_philo(&philos[i], net, (const char **)&argv[1]);
 		if (i == 0)
-			philos[i].fork_l = &philos[code.n_of_philos].fork_r;
+			philos[i].fork_l = &philos[n_of_philos].fork_r;
 		else
 			philos[i].fork_l = &philos[i - 1].fork_r;
 		if (pthread_mutex_init(&philos[i].fork_r, NULL) == -1)

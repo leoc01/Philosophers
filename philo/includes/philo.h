@@ -18,6 +18,7 @@
 # include <limits.h>
 # include <stdlib.h>
 # include <pthread.h>
+# include <sys/time.h>
 
 # define TRUE 1
 # define FALSE 0
@@ -35,6 +36,7 @@ typedef struct s_net
 {
 	pthread_mutex_t	life_feed;
 	pthread_mutex_t	last_whisper;
+	int				retire;
 	int				someone_died;
 }	t_net;
 
@@ -48,7 +50,8 @@ typedef struct s_philo
 	t_net			*net;
 }	t_philo;
 
-int		f_is_invalid_args(int argc, const char **arg);
-t_philo	*f_init_philos(int argc, char **argv, t_net *net);
+int			f_is_invalid_args(int argc, const char **arg);
+t_philo		*f_init_philos(int argc, char **argv, t_net *net);
+long long	now(void);
 
 #endif

@@ -13,8 +13,9 @@
 NAME = philo
 
 CC = cc
-CFLAGS = -pthread -fsanitize=thread -Wall -Werror -Wextra
-GDB= -g
+CFLAGS = -pthread -Wall -Werror -Wextra
+GDB = -g
+SANITIZE = # -fsanitize=thread
 RM = rm -rf
 
 INCLUDES_DIR = ./includes
@@ -26,17 +27,18 @@ M_MAIN_OBJ = $(BUILD_DIR)/main.o
 
 M_SRC = args_check.c
 M_SRC += init_philos.c
+M_SRC += time.c
 M_SRC := $(addprefix $(SRC_DIR)/,$(M_SRC))
 M_OBJ = $(M_SRC:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 
 all: $(NAME)
 
 $(NAME): $(LFT) $(M_OBJ) $(M_MAIN_OBJ)
-	$(CC) $(GDB) $(CFLAGS) $(M_OBJ) $(M_MAIN_OBJ) -o $(NAME)
+	$(CC) $(GDB) $(SANITIZE) $(CFLAGS) $(M_OBJ) $(M_MAIN_OBJ) -o $(NAME)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c 
 	@mkdir -p $(BUILD_DIR)
-	$(CC) $(GDB) $(CFLAGS) -I$(INCLUDES_DIR) -c $< -o $@
+	$(CC) $(GDB) $(SANITIZE) $(CFLAGS) -I$(INCLUDES_DIR) -c $< -o $@
 
 clean:
 	$(RM) $(BUILD_DIR)
