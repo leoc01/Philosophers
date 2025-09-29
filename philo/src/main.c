@@ -6,7 +6,7 @@
 /*   By: lbuscaro <lbuscaro@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 12:26:54 by lbuscaro          #+#    #+#             */
-/*   Updated: 2025/09/29 18:07:57 by lbuscaro         ###   ########.fr       */
+/*   Updated: 2025/09/29 18:50:29 by lbuscaro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,16 @@
 void	*life(void *p)
 {
 	t_philo	*philo;
+//	long long start;
+	long long next_meal;
 
 	philo = (t_philo *)p;
-	usleep(1000000);
+	next_meal = now() + philo->code.time_to_die;
+	while (now() < next_meal)
+	{
+		;
+	}
+	//printf("q\n");
 	pthread_mutex_lock(&philo->net->last_whisper);
 	if (philo->net->retire)
 	{
@@ -25,7 +32,7 @@ void	*life(void *p)
 	}
 	else
 	{
-		philo->net->someone_died = philo->num;
+		philo->net->obituary = philo->num;
 		pthread_mutex_unlock(&philo->net->last_whisper);
 	}
 	return (NULL);
@@ -54,9 +61,9 @@ void	check_obituary(t_net *net, long long start)
 	while (1)
 	{
 		pthread_mutex_lock(&net->last_whisper);
-		if (net->someone_died)
+		if (net->obituary)
 		{
-			printf("%lld %d died\n", now() - start, net->someone_died);
+			printf("%lld %d died\n", now() - start, net->obituary);
 			net->retire = 1;
 			pthread_mutex_unlock(&net->last_whisper);
 			return ;
@@ -84,7 +91,7 @@ int	main(int argc, char **argv)
 	t_net	net;
 	long long		start;
 
-	net.someone_died = 0;
+	net.obituary = 0;
 	net.retire = 0;
 	pthread_mutex_init(&net.life_feed, NULL);
 	pthread_mutex_init(&net.last_whisper, NULL);
@@ -97,6 +104,7 @@ int	main(int argc, char **argv)
 		free(philos);
 		return (2);
 	}
+	usleep(100);
 	check_obituary(&net, start);
 	retire_philosophers(philos);
 	pthread_mutex_destroy(&net.last_whisper);

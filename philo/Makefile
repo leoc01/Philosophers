@@ -15,7 +15,7 @@ NAME = philo
 CC = cc
 CFLAGS = -pthread -Wall -Werror -Wextra
 GDB = -g
-SANITIZE = # -fsanitize=thread
+SANITIZE = #-fsanitize=thread
 RM = rm -rf
 
 INCLUDES_DIR = ./includes

@@ -37,7 +37,7 @@ typedef struct s_net
 	pthread_mutex_t	life_feed;
 	pthread_mutex_t	last_whisper;
 	int				retire;
-	int				someone_died;
+	int				obituary;
 }	t_net;
 
 typedef struct s_philo
