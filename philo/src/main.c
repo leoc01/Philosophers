@@ -50,16 +50,13 @@ void	*life(void *p)
 	long long	next_meal;
 	int			order;
 	long long	beginning;
-	int			wrote;
 
-	wrote = 0;
 	philo = (t_philo *)p;
 	beginning = wait_start(philo->net);
 	wait_turn(philo->code.n_of_philos, philo->num, philo->code.time_to_eat);
 	next_meal = beginning + philo->code.time_to_die;
 	while (now() < next_meal)
 	{
-		//usleep(100);
 		pthread_mutex_lock(&philo->net->read);
 		order = philo->net->retire;
 		pthread_mutex_unlock(&philo->net->read);
@@ -89,7 +86,7 @@ void	*life(void *p)
 		if (order)
 			break ;
 		pthread_mutex_lock(&philo->net->life_feed);
-		wrote = printf("%lld %u is thinking\n", now() - beginning, philo->num + 1);
+		printf("%lld %u is thinking\n", now() - beginning, philo->num + 1);
 		pthread_mutex_unlock(&philo->net->life_feed);
 		pthread_mutex_lock(&philo->net->read);
 		order = philo->net->retire;
