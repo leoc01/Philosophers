@@ -29,15 +29,19 @@ typedef struct s_code
 	unsigned int	time_to_die;
 	unsigned int	time_to_eat;
 	unsigned int	time_to_sleep;
+	long long		first_meal;
 	unsigned int	meals;
 }	t_code;
 
 typedef struct s_net
 {
 	pthread_mutex_t	life_feed;
+	pthread_mutex_t	start;
 	pthread_mutex_t	last_whisper;
+	pthread_mutex_t	read;
 	int				retire;
 	int				obituary;
+	long long		beginning;
 }	t_net;
 
 typedef struct s_philo
