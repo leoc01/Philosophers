@@ -64,6 +64,12 @@ void	*life(void *p)
 			break ;
 		pthread_mutex_lock(&philo->fork_r);
 		pthread_mutex_lock(philo->fork_l);
+		if (now() > next_meal)
+		{
+			pthread_mutex_unlock(&philo->fork_r);
+			pthread_mutex_unlock(philo->fork_l);
+			break;
+		}
 		next_meal = now() + philo->code.time_to_die;
 		pthread_mutex_lock(&philo->net->life_feed);
 		printf("%lld %u is eating\n", now() - beginning, philo->num + 1);
