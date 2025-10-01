@@ -31,24 +31,45 @@ void	wait_turn(unsigned int n_of_philos, unsigned int me, unsigned int time_to_e
 		if (me % 2 == 0)
 			return ;
 		else
-			usleep(time_to_eat - 100);
+			usleep(time_to_eat * 1000 - 10);
 	}
 	else
 	{
 		if (me == n_of_philos - 1)
-			return;
+			usleep(time_to_eat * 1000 * 2 - 100);
 		else if (me % 2 == 0)
-			usleep(time_to_eat - 100);
+			return;
 		else
-			usleep(time_to_eat * 2 - 100);
+			usleep(time_to_eat * 1000 - 100);
 	}
+}
+
+int		retire(t_net *net)
+{
+	int	order;
+
+	pthread_mutex_lock(&net->read);
+	order = net->retire;
+	pthread_mutex_unlock(&net->read);
+	if (order)
+		return (1);
+	return (0);
+}
+
+int	message(const char *msg, t_philo *philo, long long beginning)
+{
+	if (retire(philo->net))
+		return (0);
+	pthread_mutex_lock(&philo->net->life_feed);
+	printf("%lld %u %s\n", now() - beginning, philo->num + 1, msg);
+	pthread_mutex_unlock(&philo->net->life_feed);
+	return (1);
 }
 
 void	*life(void *p)
 {
 	t_philo		*philo;
 	long long	next_meal;
-	int			order;
 	long long	beginning;
 
 	philo = (t_philo *)p;
@@ -57,50 +78,33 @@ void	*life(void *p)
 	next_meal = beginning + philo->code.time_to_die;
 	while (now() < next_meal)
 	{
-		pthread_mutex_lock(&philo->net->read);
-		order = philo->net->retire;
-		pthread_mutex_unlock(&philo->net->read);
-		if (order)
+		if (retire(philo->net))
 			break ;
-		pthread_mutex_lock(&philo->fork_r);
 		pthread_mutex_lock(philo->fork_l);
+		message("has taken a fork", philo, beginning);
+		pthread_mutex_lock(&philo->fork_r);
+		message("has taken a fork", philo, beginning);
 		if (now() > next_meal)
 		{
 			pthread_mutex_unlock(&philo->fork_r);
 			pthread_mutex_unlock(philo->fork_l);
 			break;
 		}
+		if (!message("is eating", philo, beginning))
+			break ;
 		next_meal = now() + philo->code.time_to_die;
-		pthread_mutex_lock(&philo->net->life_feed);
-		printf("%lld %u is eating\n", now() - beginning, philo->num + 1);
-		pthread_mutex_unlock(&philo->net->life_feed);
 		usleep(philo->code.time_to_eat * 1000);
+		if (!message("is sleeping", philo, beginning))
+			break ;
 		pthread_mutex_unlock(&philo->fork_r);
 		pthread_mutex_unlock(philo->fork_l);
-		pthread_mutex_lock(&philo->net->read);
-		order = philo->net->retire;
-		pthread_mutex_unlock(&philo->net->read);
-		if (order)
-			break ;
-		pthread_mutex_lock(&philo->net->life_feed);
-		printf("%lld %u is sleeping\n", now() - beginning, philo->num + 1);
-		pthread_mutex_unlock(&philo->net->life_feed);
 		usleep(philo->code.time_to_sleep * 1000);
-		pthread_mutex_lock(&philo->net->read);
-		order = philo->net->retire;
-		pthread_mutex_unlock(&philo->net->read);
-		if (order)
+		if (!message("is thinking", philo, beginning))
 			break ;
-		pthread_mutex_lock(&philo->net->life_feed);
-		printf("%lld %u is thinking\n", now() - beginning, philo->num + 1);
-		pthread_mutex_unlock(&philo->net->life_feed);
-		pthread_mutex_lock(&philo->net->read);
-		order = philo->net->retire;
-		pthread_mutex_unlock(&philo->net->read);
-		if (order)
-			break ;
+		while (now() + 10 < next_meal)
+			usleep(500);
 	}
-	if (order == 0)
+	if (retire(philo->net) == 0)
 	{
 		pthread_mutex_lock(&philo->net->last_whisper);
 		philo->net->obituary = philo->num + 1;
