@@ -50,6 +50,8 @@ typedef struct s_philo
 	pthread_t		thread;
 	pthread_mutex_t	*fork_l;
 	pthread_mutex_t	fork_r;
+	int				*his_fork;
+	int				my_fork;
 	t_code			code;
 	t_net			*net;
 }	t_philo;

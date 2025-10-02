@@ -38,7 +38,7 @@ void	wait_turn(unsigned int n_of_philos, unsigned int me, unsigned int time_to_e
 		if (me == n_of_philos - 1)
 			usleep(time_to_eat * 1000 * 2 - 100);
 		else if (me % 2 == 0)
-			return;
+			return ;
 		else
 			usleep(time_to_eat * 1000 - 100);
 	}
@@ -66,6 +66,47 @@ int	message(const char *msg, t_philo *philo, long long beginning)
 	return (1);
 }
 
+void	get_forks(t_philo *philo, long long beginning)
+{
+	int	fork1;
+	int	fork2;
+
+	fork1 = 0;
+	fork2 = 0;
+	while (fork1 + fork2 != 2)
+	{
+		pthread_mutex_lock(philo->fork_l);
+		if (*philo->his_fork == 1)
+		{
+			*philo->his_fork = 0;
+			fork1 = 1;
+		}
+		pthread_mutex_unlock(philo->fork_l);
+		if (fork1)
+			message("has taken a fork", philo, beginning);
+		pthread_mutex_lock(&philo->fork_r);
+		if (philo->my_fork == 1)
+		{
+			philo->my_fork = 0;
+			fork2 = 1;
+		}
+		pthread_mutex_unlock(&philo->fork_r);
+		if (fork2)
+			message("has taken a fork", philo, beginning);
+		usleep(200);
+	}
+}
+
+void	drop_forks(t_philo *philo)
+{
+		pthread_mutex_lock(philo->fork_l);
+		*philo->his_fork = 1;
+		pthread_mutex_unlock(philo->fork_l);
+		pthread_mutex_lock(&philo->fork_r);
+		philo->my_fork = 1;
+		pthread_mutex_unlock(&philo->fork_r);
+}
+
 void	*life(void *p)
 {
 	t_philo		*philo;
@@ -80,24 +121,19 @@ void	*life(void *p)
 	{
 		if (retire(philo->net))
 			break ;
-		pthread_mutex_lock(philo->fork_l);
-		message("has taken a fork", philo, beginning);
-		pthread_mutex_lock(&philo->fork_r);
-		message("has taken a fork", philo, beginning);
+		get_forks(philo, beginning);
 		if (now() > next_meal)
 		{
-			pthread_mutex_unlock(&philo->fork_r);
-			pthread_mutex_unlock(philo->fork_l);
+			drop_forks(philo);
 			break;
 		}
 		if (!message("is eating", philo, beginning))
 			break ;
 		next_meal = now() + philo->code.time_to_die;
 		usleep(philo->code.time_to_eat * 1000);
+		drop_forks(philo);
 		if (!message("is sleeping", philo, beginning))
 			break ;
-		pthread_mutex_unlock(&philo->fork_r);
-		pthread_mutex_unlock(philo->fork_l);
 		usleep(philo->code.time_to_sleep * 1000);
 		if (!message("is thinking", philo, beginning))
 			break ;

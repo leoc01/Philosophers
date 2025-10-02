@@ -33,9 +33,15 @@ t_philo	*f_init_philos(int argc, char **argv, t_net *net)
 		philos[i].num = i;
 		f_ground_philo(&philos[i], net, (const char **)&argv[1]);
 		if (i == 0)
+		{
+			philos[i].his_fork = &philos[n_of_philos - 1].my_fork;
 			philos[i].fork_l = &philos[n_of_philos - 1].fork_r;
+		}
 		else
+		{
+			philos[i].his_fork = &philos[i - 1].my_fork;
 			philos[i].fork_l = &philos[i - 1].fork_r;
+		}
 		if (pthread_mutex_init(&philos[i].fork_r, NULL) == -1)
 		{
 			free(philos);
@@ -68,6 +74,7 @@ static void	f_ground_philo(t_philo *phi, t_net *net, const char **arg)
 	phi->code.time_to_sleep = time_to_sleep;
 	phi->code.meals = meals;
 	phi->net = net;
+	phi->my_fork = 1;
 }
 
 static unsigned int	f_atoui(const char *nptr)
