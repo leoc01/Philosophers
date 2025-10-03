@@ -33,16 +33,16 @@ void	wait_turn(unsigned int n_of_philos, unsigned int me, unsigned int time_to_e
 		if (me % 2 == 0)
 			return ;
 		else
-			usleep(time_to_eat * 1000 - 100);
+			usleep(time_to_eat * 1000 - 1000);
 	}
 	else
 	{
 		if (me == n_of_philos - 1)
-			usleep(time_to_eat * 1000 * 2 - 100);
+			usleep(time_to_eat * 1000 * 2 - 1000);
 		else if (me % 2 == 0)
 			return ;
 		else
-			usleep(time_to_eat * 1000 - 100);
+			usleep(time_to_eat * 1000 - 1000);
 	}
 }
 
@@ -60,21 +60,15 @@ int		retire(t_net *net)
 
 long long	message(const char *msg, t_philo *philo, long long beginning)
 {
-	long long	action_time;
-
-	action_time = now();
-	(void)msg;
-	(void)beginning;
 	pthread_mutex_lock(&philo->net->life_feed);
 	if (philo->net->retire)
 	{
 		pthread_mutex_unlock(&philo->net->life_feed);
 		return (0);
 	}
-	//write(1, "ta comendo dormindo e tal.\n", 27);
-	printf("%lld %u %s\n", action_time - beginning, philo->num + 1, msg);
+	printf("%lld %u %s\n", now() - beginning, philo->num + 1, msg);
 	pthread_mutex_unlock(&philo->net->life_feed);
-	return (action_time);
+	return (1);
 }
 
 long long	get_forks(t_philo *philo, long long beginning, long long next_meal)
@@ -96,15 +90,21 @@ long long	get_forks(t_philo *philo, long long beginning, long long next_meal)
 		}
 		pthread_mutex_unlock(&philo->fork_r);
 		if (fork1)
+		{
 			message("has taken a fork", philo, beginning);
+			break ;
+		}
 		usleep(100);
+	}
+	if (!philo->fork_l)
+	{
+		while (now() > next_meal)
+			usleep(100);
 	}
 	while (fork2 != 1)
 	{
 		if (now() > next_meal)
 			return (0);
-		if (!philo->fork_l)
-			continue ;
 		pthread_mutex_lock(philo->fork_l);
 		if (*philo->his_fork == 1)
 		{
@@ -113,7 +113,10 @@ long long	get_forks(t_philo *philo, long long beginning, long long next_meal)
 		}
 		pthread_mutex_unlock(philo->fork_l);
 		if (fork2)
+		{
 			message("has taken a fork", philo, beginning);
+			break ;
+		}
 		usleep(100);
 	}
 	return (now());
@@ -135,6 +138,7 @@ void	*life(void *p)
 	long long	next_meal;
 	long long	beginning;
 	long long	start_eating;
+	long long	start_sleeping;
 
 	philo = (t_philo *)p;
 	beginning = wait_start(philo->net);
@@ -142,10 +146,10 @@ void	*life(void *p)
 	next_meal = beginning + philo->code.time_to_die;
 	while (now() < next_meal)
 	{
-		if (!get_forks(philo, beginning, next_meal))
-			break ;
-		start_eating = message("is eating", philo, beginning);
+		start_eating = get_forks(philo, beginning, next_meal);
 		if (!start_eating)
+			break ;
+		if (!message("is eating", philo, beginning))
 		{
 			drop_forks(philo);
 			break ;
@@ -154,11 +158,13 @@ void	*life(void *p)
 		while (now() < start_eating + philo->code.time_to_eat)
 			usleep(100);
 		drop_forks(philo);
+		start_sleeping = now();
 		if (philo->code.meals != 0 && !--philo->remaining_meal)
 			return (NULL);
 		if (!message("is sleeping", philo, beginning))
 			break ;
-		usleep(philo->code.time_to_sleep * 1000);
+		while (now() < start_sleeping + philo->code.time_to_sleep)
+			usleep(100);
 		if (!message("is thinking", philo, beginning))
 			break ;
 	}
