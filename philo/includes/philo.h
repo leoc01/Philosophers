@@ -26,9 +26,9 @@
 typedef struct s_code
 {
 	unsigned int	n_of_philos;
-	unsigned int	time_to_die;
-	unsigned int	time_to_eat;
-	unsigned int	time_to_sleep;
+	unsigned int	tt_die;
+	unsigned int	tt_eat;
+	unsigned int	tt_sleep;
 	long long		first_meal;
 	unsigned int	meals;
 }	t_code;
@@ -36,12 +36,12 @@ typedef struct s_code
 typedef struct s_net
 {
 	pthread_mutex_t	life_feed;
-	pthread_mutex_t	start;
+	pthread_mutex_t	go;
 	pthread_mutex_t	last_whisper;
 	pthread_mutex_t	read;
 	int				retire;
 	int				obituary;
-	long long		beginning;
+	long long		start;
 }	t_net;
 
 typedef struct s_philo
@@ -58,7 +58,7 @@ typedef struct s_philo
 }	t_philo;
 
 int			f_is_invalid_args(int argc, const char **arg);
-t_philo		*f_init_philos(int argc, char **argv, t_net *net);
+t_philo		*f_init_philos(char **argv, t_net *net);
 long long	now(void);
 
 #endif
