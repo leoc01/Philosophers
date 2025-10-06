@@ -90,56 +90,43 @@ void	wait_turn(t_philo *philo, long long start, long long next_meal)
 	}
 }
 
+int	grab_fork(pthread_mutex_t *fork_m, int *fork_on_table)
+{
+	int	fork_with_philo;
+
+	fork_with_philo = 0;
+	pthread_mutex_lock(fork_m);
+	if (*fork_on_table)
+	{
+		*fork_on_table = 0;
+		fork_with_philo = 1;
+	}
+	pthread_mutex_unlock(fork_m);
+	return (fork_with_philo);
+}
+
 long long	get_forks(t_philo *philo, long long start, long long next_meal)
 {
-	int	fork1;
-	int	fork2;
+	int	fork;
 
-	fork1 = 0;
-	fork2 = 0;
-	while (fork1 != 1)
+	fork = 0;
+	while (is_alive(next_meal) && !fork)
 	{
-		if (now() > next_meal)
-			return (0);
-		pthread_mutex_lock(&philo->fork_r);
-		if (philo->my_fork == 1)
-		{
-			philo->my_fork = 0;
-			fork1 = 1;
-		}
-		pthread_mutex_unlock(&philo->fork_r);
-		if (fork1)
-		{
-			message("has taken a fork", philo, start);
-			break ;
-		}
+		fork = grab_fork(&philo->fork_r, &philo->my_fork);
 		usleep(100);
 	}
-	if (!philo->fork_l)
+	if (fork)
+		message("has taken a fork", philo, start);
+	while (!philo->fork_l && is_alive(next_meal))
+		usleep(100);
+	fork = 0;
+	while (is_alive(next_meal) && !fork)
 	{
-		while (now() > next_meal)
-			usleep(100);
-	}
-	while (fork2 != 1)
-	{
-		if (now() > next_meal)
-		{
-			return (0);
-		}
-		pthread_mutex_lock(philo->fork_l);
-		if (*philo->his_fork == 1)
-		{
-			*philo->his_fork = 0;
-			fork2 = 1;
-		}
-		pthread_mutex_unlock(philo->fork_l);
-		if (fork2)
-		{
-			message("has taken a fork", philo, start);
-			break ;
-		}
+		fork = grab_fork(philo->fork_l, philo->his_fork);
 		usleep(100);
 	}
+	if (fork)
+		message("has taken a fork", philo, start);
 	return (now());
 }
 
@@ -190,6 +177,22 @@ long long	philo_sleep(t_philo *philo, long long start, long long next_meal)
 	return (sleep_time);
 }
 
+void	end_cycle(t_philo *philo)
+{
+	if (philo->remaining_meal > 0 && !retire(philo->net))
+	{
+		pthread_mutex_lock(&philo->net->last_whisper);
+		philo->net->obituary = philo->num + 1;
+		pthread_mutex_unlock(&philo->net->last_whisper);
+	}
+	else
+	{
+		pthread_mutex_lock(&philo->net->last_whisper);
+		philo->net->obituary = -1;
+		pthread_mutex_unlock(&philo->net->last_whisper);
+	}
+}
+
 void	*life(void *p)
 {
 	t_philo		*philo;
@@ -211,15 +214,10 @@ void	*life(void *p)
 			break ;
 		if (!message("is thinking", philo, start))
 			break ;
-		while (now() < next_meal - 10)
+		while (now() < next_meal - 5)
 			usleep(100);
 	}
-	if (retire(philo->net) == 0 && philo->remaining_meal > 0)
-	{
-		pthread_mutex_lock(&philo->net->last_whisper);
-		philo->net->obituary = philo->num + 1;
-		pthread_mutex_unlock(&philo->net->last_whisper);
-	}
+	end_cycle(philo);
 	return (NULL);
 }
 
@@ -246,14 +244,18 @@ void	check_obituary(t_net *net)
 	while (1)
 	{
 		pthread_mutex_lock(&net->last_whisper);
-		if (net->obituary)
+		if (net->obituary > 0)
 		{
 			pthread_mutex_lock(&net->life_feed);
 			net->retire = 1;
 			printf("%lld %d died\n", now() - net->start, net->obituary);
 			pthread_mutex_unlock(&net->life_feed);
-			pthread_mutex_unlock(&net->last_whisper);
-			return ;
+			//pthread_mutex_unlock(&net->last_whisper);
+			break ;
+		}
+		else if (net->obituary == -1)
+		{
+			break ;
 		}
 		pthread_mutex_unlock(&net->last_whisper);
 		usleep(5000);
