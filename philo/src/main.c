@@ -117,6 +117,8 @@ long long	get_forks(t_philo *philo, long long start, long long next_meal)
 	}
 	if (fork)
 		message("has taken a fork", philo, start);
+	else
+		return (0);
 	while (!philo->fork_l && is_alive(next_meal))
 		usleep(100);
 	fork = 0;
@@ -127,6 +129,8 @@ long long	get_forks(t_philo *philo, long long start, long long next_meal)
 	}
 	if (fork)
 		message("has taken a fork", philo, start);
+	else
+		return (0);
 	return (now());
 }
 
@@ -214,7 +218,7 @@ void	*life(void *p)
 			break ;
 		if (!message("is thinking", philo, start))
 			break ;
-		while (now() < next_meal - 5)
+		while (now() < next_meal - 2)
 			usleep(100);
 	}
 	end_cycle(philo);
