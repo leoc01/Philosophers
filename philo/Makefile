@@ -25,9 +25,11 @@ BUILD_DIR = ./build
 M_MAIN = $(SRC_DIR)/main.c
 M_MAIN_OBJ = $(BUILD_DIR)/main.o
 
-M_SRC = args_check.c
-M_SRC += init_philos.c
-M_SRC += time.c
+M_SRC = life.c
+M_SRC += life_utils.c
+M_SRC += simulation.c
+M_SRC += questions.c
+M_SRC += utils.c
 M_SRC := $(addprefix $(SRC_DIR)/,$(M_SRC))
 M_OBJ = $(M_SRC:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 

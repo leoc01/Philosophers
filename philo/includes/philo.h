@@ -22,6 +22,10 @@
 
 # define TRUE 1
 # define FALSE 0
+# define START 1
+# define STOP 0
+
+typedef long long	t_ms;
 
 typedef struct s_code
 {
@@ -29,7 +33,7 @@ typedef struct s_code
 	unsigned int	tt_die;
 	unsigned int	tt_eat;
 	unsigned int	tt_sleep;
-	long long		first_meal;
+	t_ms			first_meal;
 	unsigned int	meals;
 }	t_code;
 
@@ -41,7 +45,7 @@ typedef struct s_net
 	pthread_mutex_t	read;
 	int				retire;
 	int				obituary;
-	long long		start;
+	t_ms			started_at;
 }	t_net;
 
 typedef struct s_philo
@@ -57,31 +61,25 @@ typedef struct s_philo
 	t_net			*net;
 }	t_philo;
 
-long long	message(const char *msg, t_philo *philo, long long start);
-int	philo_net(int action, t_net *net);
+int				is_invalid_args(int argc, const char **arg);
+t_philo			*init_philos(char **argv, t_net *net);
+int				handle_net(int action, t_net *net);
+t_ms			start(t_net *net);
 
-void	*life(void *p);
-void	wait_turn(t_philo *philo, long long start, long long next_meal);
-long long	wait_start(t_net *net);
-int	hold(t_net *net, long long wait_until, long long next_meal);
-long long	now(void);
+void			*life(void *p);
 
-long long	philo_eat(t_philo *philo, long long start, long long next_meal);
-long long	philo_sleep(t_philo *philo, long long start, long long next_meal);
-int	is_alive(long long next_meal);
-int	retire(t_net *net);
-void	end_cycle(t_philo *philo);
+t_ms			get_forks(t_philo *philo, t_ms start, t_ms next_meal);
+void			drop_forks(t_philo *philo);
+t_ms			message(const char *msg, t_philo *philo, t_ms start);
 
-long long	get_forks(t_philo *philo, long long start, long long next_meal);
-int	grab_fork(pthread_mutex_t *fork_m, int *fork_on_table);
-void	drop_forks(t_philo *philo);
+t_ms			now(void);
+int				is_alive(t_ms next_meal);
+int				should_retire(t_net *net);
+int				hold(t_net *net, t_ms wait_until, t_ms next_meal);
+void			wait_turn(t_philo *philo, t_ms start, t_ms next_meal);
 
-int	spawn_philos(t_philo *philos);
-int			f_is_invalid_args(int argc, const char **arg);
-t_philo		*f_init_philos(char **argv, t_net *net);
-void	check_obituary(t_net *net);
-void	retire_philosophers(t_philo *philos);
-
-
+int				f_is_digit(int c);
+int				is_invalid_args(const int argc, const char **arg);
+unsigned int	atoui(const char *nptr);
 
 #endif

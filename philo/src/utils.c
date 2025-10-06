@@ -1,20 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   args_check.c                                       :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lbuscaro <lbuscaro@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/27 17:35:03 by lbuscaro          #+#    #+#             */
-/*   Updated: 2025/09/27 19:56:30 by lbuscaro         ###   ########.fr       */
+/*   Created: 2025/10/06 18:28:07 by lbuscaro          #+#    #+#             */
+/*   Updated: 2025/10/06 18:28:08 by lbuscaro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static int	f_is_digit(int c);
+int	f_is_digit(int c)
+{
+	if (c >= 48 && c <= 57)
+		return (TRUE);
+	return (FALSE);
+}
 
-int	f_is_invalid_args(const int argc, const char **arg)
+int	is_invalid_args(const int argc, const char **arg)
 {
 	unsigned int	w;
 	unsigned int	c;
@@ -43,9 +48,17 @@ int	f_is_invalid_args(const int argc, const char **arg)
 	return (is_invalid);
 }
 
-static int	f_is_digit(int c)
+unsigned int	atoui(const char *nptr)
 {
-	if (c >= 48 && c <= 57)
-		return (TRUE);
-	return (FALSE);
+	unsigned long int	result;
+
+	result = 0;
+	while (*nptr >= '0' && *nptr <= '9' && *nptr != '\0')
+	{
+		result = result * 10 + (*nptr) - '0';
+		nptr++;
+	}
+	if (result > UINT_MAX)
+		return (0);
+	return ((unsigned int)result);
 }
